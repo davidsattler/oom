@@ -55,3 +55,4 @@
 
 ### [Lesson 8 - Final Evaluation](https://github.com/bicoom/oom/wiki/Lesson-8)
   * final evaluation of student projects
+"# test_freitag" 
