@@ -2,23 +2,24 @@
 using System.Net;
 using NUnit.Framework;
 using Newtonsoft.Json;
+using System.IO;
 using System.Collections.Generic;
 
 namespace Task4
 {
 	public interface Daddy
 	{
-		void updatetrack(decimal km, decimal zeit_in_minuten, decimal koerpergewicht_in_kg);
+		void Updatetrack(decimal km, decimal zeit_in_minuten, decimal koerpergewicht_in_kg);
 		/*void updatekm(decimal km);
 		decimal berechne_kalorien(decimal km, decimal gewicht);*/ //kann ich nicht benützen, da private in den Klassen
-		void print_data();
+		void Print_data();
 
 
 	}
 
 	class Radfahren : Daddy
 	{
-		public void print_data()
+		public void Print_data()
 		{
 			Console.WriteLine("Kilometer Gesamt: {0}\nInvestierte Zeit Gesamt: {1}\nVerbrauchte Kalorien Gesamt {2}\n",
 			Km_gesamt, time_total, kalorien_total);
@@ -44,26 +45,26 @@ namespace Task4
 		//constructor kann nur bei der Initialisierung (new) benutzt werden
 		public Radfahren(decimal km, decimal zeit_in_minuten, decimal koerpergewicht_in_kg)
 		{
-			updatetrack(km, zeit_in_minuten, koerpergewicht_in_kg);
+			Updatetrack(km, zeit_in_minuten, koerpergewicht_in_kg);
 		}
 
-		public void updatetrack(decimal km, decimal zeit_in_minuten, decimal koerpergewicht_in_kg)
+		public void Updatetrack(decimal km, decimal zeit_in_minuten, decimal koerpergewicht_in_kg)
 		{
 			if (km <= 0) throw new Exception("km-Zahl muss positiv sein");
 			if (zeit_in_minuten <= 0) throw new Exception("Zeit muss positiv sein");
 			if (koerpergewicht_in_kg <= 0) throw new Exception("Gewicht muss positiv sein");
 
-			kalorien_total += berechne_kalorien(koerpergewicht_in_kg, zeit_in_minuten);
+			kalorien_total += Berechne_kalorien(koerpergewicht_in_kg, zeit_in_minuten);
 			km_total = km_total + km;
 			time_total = time_total + zeit_in_minuten;
 		}
 
-		private void updatekm(decimal km)
+		private void Updatekm(decimal km)
 		{
 			km_total = km_total + km;
 		}
 
-		private decimal berechne_kalorien(decimal gewicht_in_kg, decimal zeit)
+		private decimal Berechne_kalorien(decimal gewicht_in_kg, decimal zeit)
 		{
 			//8 kcal pro kg pro Stunde
 			if (zeit <= 0) throw new Exception("Zeit muss positiv sein");
@@ -78,7 +79,7 @@ namespace Task4
 	}
 	class Laufen : Daddy
 	{
-		public void print_data()
+		public void Print_data()
 		{
 			Console.WriteLine("Kilometer Gesamt: {0}\nInvestierte Zeit Gesamt: {1}\nVerbrauchte Kalorien Gesamt {2}\n",
 			Km_gesamt, time_total, kalorien_total);
@@ -88,6 +89,7 @@ namespace Task4
 		{
 			get { return km_total; }
 		}
+
 
 		private decimal kalorien_total = 0;
 		public decimal Kalorien_gesamt
@@ -100,21 +102,27 @@ namespace Task4
 		{
 			get { return time_total; }
 		}
-
-		//constructor kann nur bei der Initialisierung (new) benutzt werden
-		public Laufen(decimal km, decimal zeit_in_minuten, decimal koerpergewicht_in_kg)
+		private decimal gewicht_total = 0; //total is just for the conformity
+		public decimal Gewicht_gesamt
 		{
-			updatetrack(km, zeit_in_minuten, koerpergewicht_in_kg);
+			get { return gewicht_total;}
 		}
 
-		public void updatetrack(decimal km, decimal zeit_in_minuten, decimal koerpergewicht_in_kg)
+		//constructor kann nur bei der Initialisierung (new) benutzt werden
+		public Laufen(decimal km_gesamt, decimal zeit_gesamt, decimal gewicht_gesamt)
+		{
+			Updatetrack(km_gesamt, zeit_gesamt, gewicht_gesamt);
+		}
+
+		public void Updatetrack(decimal km, decimal zeit_in_minuten, decimal koerpergewicht_in_kg)
 		{
 			if (km <= 0) throw new Exception("km-Zahl muss positiv sein");
 			if (zeit_in_minuten <= 0) throw new Exception("Zeit muss positiv sein");
-
+			if (koerpergewicht_in_kg <= 0) throw new Exception("Gewicht muss positiv sein");
 			kalorien_total += berechne_kalorien(km, koerpergewicht_in_kg);
 			km_total = km_total + km;
 			time_total = time_total + zeit_in_minuten;
+			gewicht_total = koerpergewicht_in_kg;
 		}
 
 		private void updatekm(decimal km)
@@ -152,23 +160,32 @@ namespace Task4
 
 			for (i = 0; i < data.Length; i++)
 			{
-				data[0].updatetrack(a, b, c);
-				data[1].updatetrack(a, b, c);
+				data[0].Updatetrack(a, b, c);
+				data[1].Updatetrack(a, b, c);
 
 				a++;
 				b++;
 				c++;
 			}
-			data[0].print_data();
-			data[1].print_data();
+			data[0].Print_data();
+			data[1].Print_data();
 
 			//Task4
 
 			var laufen = new Laufen(12, 60, 90);
 
-			string s = JsonConvert.SerializeObject(laufen);
+			string s = JsonConvert.SerializeObject(laufen,Formatting.Indented);
 			Console.WriteLine(s);
-			//Laufen y = JsonConvert.DeserializeObject<Laufen>(s);
+
+
+			//Problem beim Serialisieren, da Gewicht nicht übergeben da es im Grunde weggeworfen und nicht gespeichert wird
+			Laufen y = JsonConvert.DeserializeObject<Laufen>(s);
+			//y testen
+			y.Print_data();
+			y.Updatetrack(1, 1, 80);
+			y.Print_data();
+
+			//neuer Test mit Array
 
 			var json = new string[5];
 			var arr = new Laufen[5];
@@ -184,11 +201,14 @@ namespace Task4
 				Console.WriteLine(json[i]);
 			}
 			Console.WriteLine("\n");
-			/*for (i = 0; i < 5; i++)
+
+
+			for (i = 0; i < 5; i++)
 			{
 				example[i] = JsonConvert.DeserializeObject<Laufen>(json[i]);
 				Console.WriteLine(json[i]);
-			}*/
+
+			}
 
 
 

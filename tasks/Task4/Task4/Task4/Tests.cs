@@ -24,12 +24,12 @@ namespace Tests
 		public void growthcount()
 		{
 			var x = new Laufen(12, 60, 90);
-			x.updatetrack(12, 60, 90);
+			x.Updatetrack(12, 60, 90);
 			Assert.IsTrue(x.Km_gesamt == 24);
 			Assert.IsTrue(x.Zeit_gesamt == 120);
 
 			var a = new Radfahren(12, 60, 90);
-			a.updatetrack(12, 60, 90);
+			a.Updatetrack(12, 60, 90);
 			Assert.IsTrue(a.Km_gesamt == 24);
 			Assert.IsTrue(a.Zeit_gesamt == 120);
 		}
