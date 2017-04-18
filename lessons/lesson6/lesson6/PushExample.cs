@@ -12,6 +12,8 @@ namespace lesson6
 {
     public static class PushExample
     {
+		
+
         public static void Run()
         {
             var w = new Form() { Text = "Push Example", Width = 800, Height = 600 };
@@ -22,9 +24,9 @@ namespace lesson6
             // Rx observables
             IObservable<Point> moves = Observable.FromEventPattern<MouseEventArgs>(w, "MouseMove").Select(x => x.EventArgs.Location);
 
-            //moves
-            //    .Subscribe(e => WriteLine($"[A] ({e.X}, {e.Y})"))
-            //    ;
+            moves
+                .Subscribe(e => WriteLine($"[A] ({e.X}, {e.Y})"))
+                ;
 
             //moves
             //    .DistinctUntilChanged()
@@ -37,11 +39,11 @@ namespace lesson6
             //    .Subscribe(e => WriteLine($"[C] ({e.X}, {e.Y})"))
             //    ;
 
-            moves
+            /*moves
                 .Throttle(TimeSpan.FromSeconds(0.2))
                 .DistinctUntilChanged()
                 .Subscribe(e => WriteLine($"[D] ({e.X}, {e.Y})"))
-                ;
+                ;*/
 
             Application.Run(w);
         }

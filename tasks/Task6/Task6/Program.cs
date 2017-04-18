@@ -4,8 +4,14 @@ using NUnit.Framework;
 using Newtonsoft.Json;
 using System.IO;
 using System.Collections.Generic;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
+using System.Threading.Tasks;
+using System.Threading;
+using static System.Console;
 
-namespace Task4
+
+namespace Task6
 {
 	public interface Daddy
 	{
@@ -105,7 +111,7 @@ namespace Task4
 		private decimal gewicht_total = 0; //total is just for the conformity
 		public decimal Gewicht_gesamt
 		{
-			get { return gewicht_total;}
+			get { return gewicht_total; }
 		}
 
 		//constructor kann nur bei der Initialisierung (new) benutzt werden
@@ -145,12 +151,13 @@ namespace Task4
 	}
 
 
+
 	class MainClass
 	{
+		public static double rechnung() { return 1 + 1; }
 
 		public static void Main(string[] args)
 		{
-
 			/*var data = new Daddy[] { new Radfahren(1, 2, 3), new Laufen(3, 2, 1) };
 			int i = 0;
 			int a = 1;
@@ -183,7 +190,7 @@ namespace Task4
 			//y testen
 			y.Print_data();
 			y.Updatetrack(1, 1, 80);
-			y.Print_data();*/
+			y.Print_data();
 
 			//neuer Test mit Array
 
@@ -198,7 +205,7 @@ namespace Task4
 			}
 			for (i = 0; i < 5; i++)
 			{
-				json[i] = JsonConvert.SerializeObject(arr[i],Formatting.Indented);
+				json[i] = JsonConvert.SerializeObject(arr[i], Formatting.Indented);
 				Console.WriteLine(json[i]);
 			}
 			Console.WriteLine("\n--------\n");
@@ -209,21 +216,93 @@ namespace Task4
 				example[i] = JsonConvert.DeserializeObject<Laufen>(json[i]);
 				Console.WriteLine(json[i]);
 
+			}*/
+
+
+
+			//var producer = new Subject<Laufen>();
+			////producer.Subscribe(x => x.Print_data());
+
+			//var throttle = producer.Throttle(TimeSpan.FromMilliseconds(750));
+			//throttle.Subscribe(x => x.Print_data());
+
+			//      for (var i = 0; i < 100; i++)
+			//{
+			//	if (i % 10 > 4) System.Threading.Thread.Sleep(TimeSpan.FromMilliseconds(500));
+			//	else System.Threading.Thread.Sleep(TimeSpan.FromMilliseconds(1000));
+			//	var help = new Laufen(1 + i, 2 + i, 3 + i);
+			//	producer.OnNext(help);
+			//}
+
+			Task<int> erg = computation();
+			erg.ContinueWith(t => Console.WriteLine(t.Result));
+
+
+
+			//var x = 2;
+			//var random = new Random();
+
+			////create working thread
+			//var task = Task.Run(() =>
+			//	{
+			//		WriteLine($"computing result for {x}");
+			//		Task.Delay(TimeSpan.FromSeconds(5.0 + random.Next(10))).Wait();
+			//		WriteLine($"done computing result for {x}");
+			//		return x * x;
+			//	});
+			//task.ContinueWith(t => Console.WriteLine("Job Done! Ergebnis: {0}\n", t.Result));
+
+
+			//Console.WriteLine("in the mean time this thread is working on other important stuff\n");
+
+			//string data = await new WebClient().DownloadStringAsync(@"api.openweathermap.org/data/2.5/forecast?id=4228440&APPID=5a25822b84dd4a99085d04091d4e847b");
+			//Console.WriteLine(data);
+
+			//Task<string> datax = new WebClient().DownloadStringAsync("api.openweathermap.org/data/2.5/forecast?id=4228440&APPID=5a25822b84dd4a99085d04091d4e847b");
+			//Console.WriteLine(data);
+
+			//give every process the time to finish
+			for (var y = 1; y < int.MaxValue; y++)
+			{
+				System.Threading.Thread.Sleep(TimeSpan.FromSeconds(1));
+				if (y % 5 == 0) Console.WriteLine("{0} seconds past\n", y);
 			}
-
-
-
-
-
-
-
-
-
 			return;
 
-
-
-
 		}
+
+
+		
+
+	public static Task<int> computation()
+	{
+			return Task.Run(() =>
+			{
+				System.Threading.Thread.Sleep(TimeSpan.FromSeconds(11));
+				return 1 + 1; });
+	}
+
+		//public static Task<bool> IsPrime(int x, CancellationToken ct)
+		//{
+		//	return Task.Run(() =>
+		//	{
+		//		for (var i = 2; i < x - 1; i++)
+		//		{
+		//			ct.ThrowIfCancellationRequested();
+		//			if (x % i == 0) return false;
+		//		}
+		//		return true;
+		//	}, ct);
+		//}
+
+		//public static async Task ComputePrimes(CancellationToken ct)
+		//{
+		//	for (var i = 100000000; i < 100000500; i++)
+		//	{
+		//		ct.ThrowIfCancellationRequested();
+		//		if (await IsPrime(i, ct)) WriteLine($"prime number: {i}");
+		//	}
+		//}
+
 	}
 }
