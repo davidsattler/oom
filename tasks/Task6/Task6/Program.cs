@@ -234,8 +234,8 @@ namespace Task6
 			//	producer.OnNext(help);
 			//}
 
-			Task<int> erg = computation();
-			erg.ContinueWith(t => Console.WriteLine(t.Result));
+			//Task<int> erg = computation();
+			//erg.ContinueWith(t => Console.WriteLine(t.Result));
 
 
 
@@ -252,21 +252,31 @@ namespace Task6
 			//	});
 			//task.ContinueWith(t => Console.WriteLine("Job Done! Ergebnis: {0}\n", t.Result));
 
-
 			//Console.WriteLine("in the mean time this thread is working on other important stuff\n");
 
-			//string data = await new WebClient().DownloadStringAsync(@"api.openweathermap.org/data/2.5/forecast?id=4228440&APPID=5a25822b84dd4a99085d04091d4e847b");
-			//Console.WriteLine(data);
+			var data = new WebClient().DownloadStringTaskAsync(new Uri("http://api.openweathermap.org/data/2.5/forecast?id=4228440&APPID=5a25822b84dd4a99085d04091d4e847b"));
+			data.ContinueWith(t => Console.WriteLine(t.Result));
+
+			var datax = new WebClient();
+
+			Console.WriteLine("hey hallo");
+			datax.DownloadStringCompleted += (sender, e) =>
+			{
+				Console.WriteLine(e.Result);
+			};
+			
+			datax.DownloadStringAsync(new Uri("http://api.openweathermap.org/data/2.5/forecast?id=4228440&APPID=5a25822b84dd4a99085d04091d4e847b"));
 
 			//Task<string> datax = new WebClient().DownloadStringAsync("api.openweathermap.org/data/2.5/forecast?id=4228440&APPID=5a25822b84dd4a99085d04091d4e847b");
 			//Console.WriteLine(data);
 
 			//give every process the time to finish
-			for (var y = 1; y < int.MaxValue; y++)
-			{
-				System.Threading.Thread.Sleep(TimeSpan.FromSeconds(1));
-				if (y % 5 == 0) Console.WriteLine("{0} seconds past\n", y);
-			}
+			//for (var y = 1; y < int.MaxValue; y++)
+			//{
+			//	System.Threading.Thread.Sleep(TimeSpan.FromSeconds(1));
+			//	if (y % 5 == 0) Console.WriteLine("{0} seconds past\n", y);
+			//}
+			Console.ReadKey();
 			return;
 
 		}
